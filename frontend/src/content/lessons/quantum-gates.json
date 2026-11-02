@@ -1,0 +1,101 @@
+{
+  "id": "L03",
+  "slug": "quantum-gates",
+  "title": "Quantum Gates: X, Y, Z, H, and CNOT",
+  "summary": "Learn what each supported gate does to a state, why phase gates can be invisible in one measurement basis, and why two Hadamards undo each other.",
+  "duration_minutes": 15,
+  "level": "Beginner",
+  "objectives": [
+    "Describe the action of X, Y, Z, H, and CNOT.",
+    "Distinguish a bit flip from a phase change.",
+    "Explain why H followed by H is the identity.",
+    "Predict the control and target roles of a CNOT."
+  ],
+  "prerequisites": ["L02: Superposition and amplitudes"],
+  "sections": [
+    {
+      "heading": "Gates are reversible transformations",
+      "body": [
+        "A quantum gate transforms amplitudes while preserving normalization. Every gate in this MVP is reversible: applying the same gate twice restores the original state for X, Y, Z, H, and CNOT.",
+        "Gate order matters. The circuit is an ordered list of instructions, not a set of symbols on a diagram."
+      ]
+    },
+    {
+      "heading": "X, Y, and Z",
+      "body": [
+        "X is the quantum NOT gate. It swaps |0⟩ and |1⟩, so X|0⟩ = |1⟩. In the computational basis it is a bit flip.",
+        "Y also flips the bit, but it adds a phase factor. Z leaves |0⟩ and |1⟩ unchanged except for a minus sign on |1⟩: Z|0⟩ = |0⟩ and Z|1⟩ = −|1⟩.",
+        "A phase is not visible if you immediately measure in the computational basis. It becomes visible when later gates make the paths interfere."
+      ],
+      "equation": "X|0⟩ = |1⟩,   Z|0⟩ = |0⟩,   Z|1⟩ = −|1⟩"
+    },
+    {
+      "heading": "H changes the measurement basis",
+      "body": [
+        "H maps |0⟩ to |+⟩ and |1⟩ to |−⟩. It creates equal-magnitude superpositions, and it also converts phase information into bit information.",
+        "Because H is its own inverse, two H gates in a row are the identity. The example circuit demonstrates this with a deterministic 0 outcome."
+      ],
+      "equation": "H = (1/√2) [[1, 1], [1, −1]],    H² = I"
+    },
+    {
+      "heading": "CNOT is a two-qubit gate",
+      "body": [
+        "CNOT (written cx) flips its target qubit exactly when its control qubit is |1⟩. If the control is |0⟩, nothing happens to the target.",
+        "On a computational-basis input, CNOT is reversible and its action is its own inverse. It is also the standard tool for creating entanglement when the control is in a superposition.",
+        "In the builder, CNOT is one step spanning two wires. Choose a control and a different target; the diagram draws a control dot and a target circle."
+      ],
+      "equation": "CNOT|00⟩ = |00⟩,   CNOT|01⟩ = |01⟩,   CNOT|10⟩ = |11⟩,   CNOT|11⟩ = |10⟩"
+    },
+    {
+      "heading": "Try the reversible example",
+      "body": [
+        "The sample circuit applies H twice to q0 and then measures. The ideal outcome is always 0.",
+        "Try replacing the two H gates with one H, run, and observe the 50/50 sampling. Then add a Z between the two H gates to see how phase changes the final interference."
+      ]
+    }
+  ],
+  "example_circuit": {
+    "num_qubits": 1,
+    "gates": [
+      { "name": "h", "target": 0 },
+      { "name": "h", "target": 0 },
+      { "name": "measure", "target": 0, "classical_bit": 0 }
+    ],
+    "shots": 1024
+  },
+  "expected_behavior": [
+    "Two consecutive H gates return q0 to |0⟩, so every shot measures 0.",
+    "A single H produces both 0 and 1 in roughly equal proportions.",
+    "Z alone on |0⟩ still measures 0 because it changes phase, not the computational-basis outcome."
+  ],
+  "check_questions": [
+    {
+      "question": "Which gate flips |0⟩ to |1⟩?",
+      "options": ["Z", "H", "X", "CNOT with control 0"],
+      "answer_index": 2,
+      "explanation": "X is the bit-flip gate. Z adds a phase, H creates a superposition, and CNOT needs a control qubit."
+    },
+    {
+      "question": "Why does Z followed by measurement give 0 for a qubit initially in |0⟩?",
+      "options": [
+        "Z destroys the qubit",
+        "Z maps |0⟩ to |0⟩, and the phase on |1⟩ is not observed in this basis",
+        "Z always forces a measurement result of 0 on every state",
+        "The measurement is skipped"
+      ],
+      "answer_index": 1,
+      "explanation": "Z|0⟩ = |0⟩. Even for |1⟩, Z only adds a minus sign, which a single computational-basis measurement cannot distinguish."
+    },
+    {
+      "question": "In CNOT q0→q1, when does q1 flip?",
+      "options": [
+        "Always",
+        "When q0 is |1⟩",
+        "When q0 is |0⟩",
+        "Only after a measurement"
+      ],
+      "answer_index": 1,
+      "explanation": "The first qubit is the control. The target flips only when the control is in |1⟩."
+    }
+  ]
+}

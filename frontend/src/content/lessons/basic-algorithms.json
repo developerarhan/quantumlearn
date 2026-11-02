@@ -1,0 +1,115 @@
+{
+  "id": "L06",
+  "slug": "basic-algorithms",
+  "title": "A First Quantum Algorithm: Bernstein–Vazirani",
+  "summary": "See how an oracle query, phase kickback, and interference combine in the one-bit Bernstein–Vazirani algorithm with secret bit s = 1.",
+  "duration_minutes": 18,
+  "level": "Intermediate",
+  "objectives": [
+    "Explain the role of an oracle query in a quantum algorithm.",
+    "Describe phase kickback from an ancilla prepared in |−⟩.",
+    "Predict the measurement result of the one-bit Bernstein–Vazirani circuit with s = 1.",
+    "Explain why the reported bitstring is \"01\" and what the leading 0 means."
+  ],
+  "prerequisites": ["L02: Superposition", "L03: Quantum gates", "L05: Entanglement"],
+  "sections": [
+    {
+      "heading": "The problem",
+      "body": [
+        "Bernstein–Vazirani learns a hidden bit string by querying an oracle. In the one-bit version, a secret bit s is encoded in a function f(x) = s·x, and the oracle returns f(x) on an ancilla.",
+        "Classically, determining one secret bit can require querying both inputs, x = 0 and x = 1. The quantum circuit recovers s with one oracle query by using superposition and interference.",
+        "This lesson demonstrates only the one-bit case with s = 1. It is a teaching circuit, not a general algorithm engine."
+      ],
+      "equation": "f(x) = s·x,   s ∈ {0, 1}"
+    },
+    {
+      "heading": "Prepare the query and the ancilla",
+      "body": [
+        "q0 is the query qubit. q1 is the ancilla, prepared in |−⟩ = (|0⟩ − |1⟩)/√2 by an X followed by H.",
+        "H on q0 creates (|0⟩ + |1⟩)/√2, so the oracle is queried on both inputs in superposition. The CNOT implements the s = 1 oracle: it flips the ancilla exactly when q0 is 1."
+      ],
+      "equation": "X(q1) → H(q1) prepares |−⟩ on the ancilla"
+    },
+    {
+      "heading": "Phase kickback and interference",
+      "body": [
+        "The CNOT flips the ancilla only on the q0 = 1 branch. Because the ancilla is in |−⟩, that flip multiplies the branch by −1. The secret bit has been written into the relative phase of q0.",
+        "The final H on q0 converts that phase difference into a definite computational-basis outcome. For s = 1, the two paths interfere so that q0 is measured as 1.",
+        "This is the core algorithmic idea: the oracle's effect is transferred into phase, and a basis change turns phase into a readable bit."
+      ],
+      "equation": "(|0⟩ + (−1)^s|1⟩)/√2  →  H  →  |s⟩"
+    },
+    {
+      "heading": "Why the count string is \"01\"",
+      "body": [
+        "Only q0 is measured, into classical bit c0. Qiskit still prints a two-character string because the circuit has two classical bits, and it places c1 on the left.",
+        "The measured value is q0 = 1, so c0 = 1. Classical bit c1 was never measured and remains initialized to 0. The result is therefore \"01\".",
+        "The leading 0 is not an ancilla measurement and says nothing about q1's quantum state. It is an unmeasured placeholder. Read the string as c1c0 = 0 1."
+      ],
+      "callout": {
+        "title": "Do not misread the leading zero",
+        "text": "The ancilla q1 is not measured. Its classical bit c1 stays 0 by initialization. The algorithm's answer is the measured query bit c0 = 1.",
+        "tone": "warning"
+      }
+    },
+    {
+      "heading": "Run the algorithm",
+      "body": [
+        "Load the sample into the builder and run 1,024 shots. The ideal simulator should return only \"01\".",
+        "Change the CNOT so it no longer implements s = 1, or remove the final H, and observe how the deterministic answer disappears. The circuit is small enough to reason about one gate at a time."
+      ]
+    }
+  ],
+  "example_circuit": {
+    "num_qubits": 2,
+    "gates": [
+      { "name": "x", "target": 1 },
+      { "name": "h", "target": 0 },
+      { "name": "h", "target": 1 },
+      { "name": "cx", "control": 0, "target": 1 },
+      { "name": "h", "target": 0 },
+      { "name": "measure", "target": 0, "classical_bit": 0 }
+    ],
+    "shots": 1024
+  },
+  "expected_behavior": [
+    "The ideal simulator returns only the bitstring \"01\" for 1,024 shots.",
+    "The measured query bit is c0 = 1, revealing s = 1.",
+    "The leading c1 = 0 is an unmeasured classical bit, not an observed ancilla outcome."
+  ],
+  "check_questions": [
+    {
+      "question": "Why is the ancilla q1 prepared with X followed by H?",
+      "options": [
+        "To measure q1 immediately",
+        "To prepare |−⟩ so the CNOT produces phase kickback",
+        "To entangle q0 and q1 permanently",
+        "To reset the classical bit c1 to 1"
+      ],
+      "answer_index": 1,
+      "explanation": "X|0⟩ = |1⟩ and H|1⟩ = |−⟩. The |−⟩ ancilla turns a CNOT bit flip into a relative phase on the control branch."
+    },
+    {
+      "question": "The circuit returns \"01\". What does the leading 0 represent?",
+      "options": [
+        "The measured value of the ancilla q1",
+        "The secret bit s = 0",
+        "Classical bit c1, which was not measured and remains 0",
+        "An error in the simulator"
+      ],
+      "answer_index": 2,
+      "explanation": "Qiskit prints c1c0. Only c0 is measured, and it is 1. c1 was never measured, so it remains initialized to 0."
+    },
+    {
+      "question": "What is the role of the final H on q0?",
+      "options": [
+        "It creates the ancilla state",
+        "It converts the phase difference into a definite computational-basis outcome",
+        "It measures q0 directly",
+        "It implements the oracle"
+      ],
+      "answer_index": 1,
+      "explanation": "The oracle writes s into the relative phase of q0. The final Hadamard interferes the branches so the phase becomes a measurable bit value."
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "id": "L01",
+  "slug": "bits-vs-qubits",
+  "title": "Classical Bits vs. Quantum Bits",
+  "summary": "Start with the difference between a definite classical bit and a qubit described by amplitudes, then measure the simplest possible circuit.",
+  "duration_minutes": 10,
+  "level": "Beginner",
+  "objectives": [
+    "Describe a classical bit as a definite 0 or 1.",
+    "Write a one-qubit state as a normalized combination of |0⟩ and |1⟩.",
+    "Explain why measurement returns one classical outcome even when the state has two amplitudes."
+  ],
+  "prerequisites": ["No prior quantum computing background"],
+  "sections": [
+    {
+      "heading": "A classical bit is a definite choice",
+      "body": [
+        "A classical bit stores exactly one value: 0 or 1. Reading it does not change it. A register of n classical bits stores one of 2^n definite strings, such as 0101.",
+        "Classical randomness can also produce 0 or 1, but the uncertainty is in our knowledge or in a random process, not in a stored superposition of two values."
+      ]
+    },
+    {
+      "heading": "A qubit carries amplitudes",
+      "body": [
+        "A qubit is described by a state vector with two complex amplitudes. The amplitudes are not probabilities: they can be negative or complex, and they can interfere.",
+        "The squared magnitudes give the probabilities of the two computational-basis outcomes. Normalization says those probabilities add to one."
+      ],
+      "equation": "|ψ⟩ = α|0⟩ + β|1⟩,    |α|² + |β|² = 1"
+    },
+    {
+      "heading": "Measurement turns amplitudes into one bit",
+      "body": [
+        "A computational-basis measurement returns 0 with probability |α|² and 1 with probability |β|². After the measurement, the qubit is in the state corresponding to the observed outcome.",
+        "One shot therefore produces one classical bit. To see a distribution, we prepare and measure the circuit many times. Each preparation-and-measurement is called a shot."
+      ],
+      "callout": {
+        "title": "Precision matters",
+        "text": "A qubit with equal-magnitude amplitudes is not 'both 0 and 1' in the sense of storing two classical values you can read out. Measurement gives a single outcome; the amplitudes determine the statistics of many repetitions.",
+        "tone": "key"
+      }
+    },
+    {
+      "heading": "Try the simplest circuit",
+      "body": [
+        "The example circuit prepares q0 in |0⟩ and immediately measures it. In an ideal simulator every shot should return 0.",
+        "After running it, return to the builder and insert an X gate before the measurement. X flips |0⟩ to |1⟩, so every shot should then return 1."
+      ]
+    }
+  ],
+  "example_circuit": {
+    "num_qubits": 1,
+    "gates": [{ "name": "measure", "target": 0, "classical_bit": 0 }],
+    "shots": 1024
+  },
+  "expected_behavior": [
+    "Measurement of |0⟩ produces the bitstring \"0\" for all 1,024 shots in the ideal simulator.",
+    "Adding X before the measurement flips the definite outcome to \"1\" for all shots.",
+    "The counts are deterministic here; no 50/50 split should appear."
+  ],
+  "check_questions": [
+    {
+      "question": "A qubit is in the state (|0⟩ + |1⟩)/√2. What does a single computational-basis measurement return?",
+      "options": [
+        "Both 0 and 1 in one shot",
+        "Either 0 or 1, with one observed value per shot",
+        "Always 0 because the amplitudes are positive",
+        "Nothing until a second qubit is measured"
+      ],
+      "answer_index": 1,
+      "explanation": "Measurement yields one classical outcome. Over many shots the two outcomes appear with probabilities |1/√2|² = 1/2 each, but a single shot is one bit."
+    },
+    {
+      "question": "What does the normalization condition |α|² + |β|² = 1 guarantee?",
+      "options": [
+        "The amplitudes are always real numbers",
+        "The measurement probabilities sum to one",
+        "The qubit is entangled with another qubit",
+        "Every shot returns both 0 and 1"
+      ],
+      "answer_index": 1,
+      "explanation": "The squared magnitudes are the probabilities of outcomes 0 and 1, so their sum must be 1."
+    }
+  ]
+}

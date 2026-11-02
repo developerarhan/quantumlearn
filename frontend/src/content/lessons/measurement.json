@@ -1,0 +1,91 @@
+{
+  "id": "L04",
+  "slug": "measurement",
+  "title": "Quantum Measurement and Shots",
+  "summary": "Understand the Born rule, why repeated shots are required, and how Qiskit orders the classical bits in a count string.",
+  "duration_minutes": 12,
+  "level": "Beginner",
+  "objectives": [
+    "Use the Born rule to compute measurement probabilities.",
+    "Explain the difference between a quantum state and a classical result.",
+    "Read a two-qubit bitstring with c1 on the left and c0 on the right.",
+    "Interpret shots as repeated preparations and measurements."
+  ],
+  "prerequisites": ["L02: Superposition and amplitudes", "L03: Quantum gates"],
+  "sections": [
+    {
+      "heading": "One state, one classical record",
+      "body": [
+        "Before measurement, the circuit evolves a quantum state. Measurement produces classical bits, and those bits are what the simulator returns.",
+        "The Born rule gives the probability of each outcome from the state's amplitudes. For a one-qubit state α|0⟩ + β|1⟩, the probability of observing 0 is |α|² and the probability of observing 1 is |β|²."
+      ],
+      "equation": "P(0) = |α|²,    P(1) = |β|²"
+    },
+    {
+      "heading": "Shots are repeated experiments",
+      "body": [
+        "A single shot prepares the circuit, applies the gates, measures, and records one bitstring. Running 1,024 shots repeats this process 1,024 times.",
+        "The result is a histogram of classical outcomes. It is not a list of 1,024 different states, and it does not reveal the amplitudes directly. The counts estimate the measurement distribution."
+      ],
+      "callout": {
+        "title": "Observed versus theoretical",
+        "text": "An observed probability is count / shots. A theoretical probability comes from the state vector. With finite shots they need not match exactly, even when the simulator is ideal.",
+        "tone": "key"
+      }
+    },
+    {
+      "heading": "Bit order in Qiskit counts",
+      "body": [
+        "Qiskit displays the highest-index classical bit on the left. For a two-qubit circuit with classical bits c0 and c1, a count string is written c1c0.",
+        "If you apply X to q1 and measure both qubits, the result is \"10\": c1 = 1 and c0 = 0. Reading the string left to right is not the same as reading qubit indices from low to high.",
+        "If a qubit is not measured, its classical bit remains 0 in the count string. That leading or trailing 0 is not evidence about the qubit's quantum state."
+      ],
+      "equation": "count string = c(n−1) … c1 c0"
+    },
+    {
+      "heading": "Compare three preparations",
+      "body": [
+        "Measure |0⟩: every shot gives 0. Apply X and measure: every shot gives 1. Apply H and measure: shots split between 0 and 1.",
+        "The sample circuit is the deterministic X case, so it should return only \"1\". Switch to the superposition lesson to compare the statistical case."
+      ]
+    }
+  ],
+  "example_circuit": {
+    "num_qubits": 1,
+    "gates": [
+      { "name": "x", "target": 0 },
+      { "name": "measure", "target": 0, "classical_bit": 0 }
+    ],
+    "shots": 1024
+  },
+  "expected_behavior": [
+    "X followed by measurement returns \"1\" for every shot in the ideal simulator.",
+    "There is no spread because the state before measurement is a computational-basis state.",
+    "A two-qubit X on q1 would produce \"10\", because c1 is the leftmost character."
+  ],
+  "check_questions": [
+    {
+      "question": "For the state (|0⟩ + i|1⟩)/√2, what is P(1)?",
+      "options": ["0", "0.25", "0.5", "1"],
+      "answer_index": 2,
+      "explanation": "The amplitude of |1⟩ is i/√2. Its squared magnitude is |i|²/2 = 1/2, so P(1) = 0.5."
+    },
+    {
+      "question": "A two-qubit circuit applies X to q1 and measures q0 and q1. Which count string should appear?",
+      "options": ["01", "10", "11", "00"],
+      "answer_index": 1,
+      "explanation": "Qiskit writes c1c0. q1 = 1 and q0 = 0, so the string is \"10\"."
+    },
+    {
+      "question": "Why does increasing shots not guarantee exactly 50/50 counts for H|0⟩?",
+      "options": [
+        "The simulator is always noisy",
+        "Each shot is an independent sample, so finite samples fluctuate",
+        "The H gate is random in a way that changes the state",
+        "Measurement changes the circuit definition"
+      ],
+      "answer_index": 1,
+      "explanation": "The ideal probability is 1/2 for each outcome. A finite number of independent samples will usually deviate from the exact ratio."
+    }
+  ]
+}

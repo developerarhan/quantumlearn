@@ -1,0 +1,94 @@
+{
+  "id": "L02",
+  "slug": "superposition",
+  "title": "Superposition and Amplitudes",
+  "summary": "Use the Hadamard gate to create |+⟩, then see how equal amplitudes become an observed distribution over many shots.",
+  "duration_minutes": 12,
+  "level": "Beginner",
+  "objectives": [
+    "Explain what the Hadamard gate does to |0⟩ and |1⟩.",
+    "Distinguish quantum amplitudes from observed probabilities.",
+    "Interpret a sampled 50/50 distribution without expecting exactly equal counts."
+  ],
+  "prerequisites": ["L01: Classical bits vs. quantum bits"],
+  "sections": [
+    {
+      "heading": "The Hadamard gate creates a superposition",
+      "body": [
+        "The Hadamard gate H maps the computational basis states to equal-magnitude superpositions. Applied to |0⟩, it produces the state commonly written |+⟩.",
+        "The two amplitudes have the same magnitude and the same sign. Their squared magnitudes are each 1/2, so the measurement probabilities are 1/2 and 1/2."
+      ],
+      "equation": "H|0⟩ = (|0⟩ + |1⟩)/√2 = |+⟩"
+    },
+    {
+      "heading": "Amplitudes are not counts",
+      "body": [
+        "The expression (|0⟩ + |1⟩)/√2 describes the state before measurement. It does not promise that 1,024 shots will produce exactly 512 zeros and 512 ones.",
+        "Each shot is a fresh sampling event. With 1,024 shots, statistical fluctuation around 50/50 is normal. A result such as 498 zeros and 526 ones is entirely consistent with the ideal state."
+      ],
+      "callout": {
+        "title": "Do not over-read one run",
+        "text": "Observed probability is count divided by shots. It estimates the state's measurement probability, but a finite sample will vary. Increase the shots to reduce, not eliminate, sampling noise.",
+        "tone": "key"
+      }
+    },
+    {
+      "heading": "Phase and basis matter",
+      "body": [
+        "H|1⟩ = (|0⟩ − |1⟩)/√2 = |−⟩. This state also gives 50/50 outcomes in the computational basis, but its relative minus sign matters if another Hadamard is applied.",
+        "Applying H twice returns the qubit to |0⟩. The intermediate superposition is real, but its phase is arranged so the second H cancels the paths back to |1⟩."
+      ],
+      "equation": "H(H|0⟩) = |0⟩"
+    },
+    {
+      "heading": "Run the superposition experiment",
+      "body": [
+        "The sample circuit applies H to q0 and measures it. Run at least 1,024 shots. You should see two bitstrings, 0 and 1, with observed probabilities near 50% each.",
+        "Change the shots to 128 and compare how much the observed split moves. This is sampling variation, not a change in the ideal state."
+      ]
+    }
+  ],
+  "example_circuit": {
+    "num_qubits": 1,
+    "gates": [
+      { "name": "h", "target": 0 },
+      { "name": "measure", "target": 0, "classical_bit": 0 }
+    ],
+    "shots": 1024
+  },
+  "expected_behavior": [
+    "The counts contain the bitstrings \"0\" and \"1\" only.",
+    "Their observed proportions are close to 50/50 but usually not exactly equal.",
+    "The explanation identifies the state as |+⟩ and describes counts as samples, not guaranteed exact probabilities."
+  ],
+  "check_questions": [
+    {
+      "question": "After H is applied to |0⟩, what is the state before measurement?",
+      "options": ["|0⟩", "|1⟩", "(|0⟩ + |1⟩)/√2", "0.5|0⟩ + 0.5|1⟩"],
+      "answer_index": 2,
+      "explanation": "H|0⟩ = (|0⟩ + |1⟩)/√2. The amplitudes are 1/√2, not 0.5; squaring them gives probability 1/2 for each outcome."
+    },
+    {
+      "question": "A 1,024-shot H experiment returns 489 zeros and 535 ones. What is the best conclusion?",
+      "options": [
+        "The circuit is broken because the counts are not 512/512",
+        "The observed sample is consistent with an ideal 50/50 distribution plus sampling noise",
+        "The qubit stayed in |0⟩",
+        "The simulator executed the H gate twice"
+      ],
+      "answer_index": 1,
+      "explanation": "Finite samples fluctuate. The observed proportions, about 47.8% and 52.2%, are compatible with an ideal 50/50 measurement distribution."
+    },
+    {
+      "question": "What happens if you apply H twice before measuring?",
+      "options": [
+        "The qubit is still in |+⟩",
+        "The outcome is always 0 because H is its own inverse",
+        "The outcome is always 1",
+        "The qubit becomes entangled with the classical bit"
+      ],
+      "answer_index": 1,
+      "explanation": "H² = I, so H followed by H restores |0⟩ and the measurement is deterministically 0."
+    }
+  ]
+}

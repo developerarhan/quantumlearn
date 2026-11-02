@@ -1,0 +1,8 @@
+{
+  "num_qubits": 1,
+  "gates": [
+    { "name": "h", "target": 0 },
+    { "name": "measure", "target": 0, "classical_bit": 0 }
+  ],
+  "shots": 1024
+}

@@ -1,0 +1,96 @@
+{
+  "id": "L05",
+  "slug": "entanglement",
+  "title": "Entanglement and Bell States",
+  "summary": "Prepare the Bell state (|00⟩ + |11⟩)/√2 with H and CNOT, then inspect the correlated measurement outcomes.",
+  "duration_minutes": 14,
+  "level": "Intermediate",
+  "objectives": [
+    "Build a Bell state with H(q0) followed by CNOT(q0, q1).",
+    "Explain why ideal measurements produce only 00 and 11.",
+    "Distinguish a joint correlation from faster-than-light communication.",
+    "Interpret the two-qubit count strings using Qiskit bit order."
+  ],
+  "prerequisites": ["L03: Quantum gates", "L04: Measurement and shots"],
+  "sections": [
+    {
+      "heading": "From superposition to correlation",
+      "body": [
+        "Start with both qubits in |00⟩. H on q0 creates (|00⟩ + |10⟩)/√2. The CNOT then flips q1 only on the branch where q0 is 1.",
+        "The two branches become |00⟩ and |11⟩. Neither qubit alone has a definite computational-basis value, but the pair has a definite relationship: the bits always agree."
+      ],
+      "equation": "(H⊗I)|00⟩ = (|00⟩ + |10⟩)/√2  →  CNOT  →  (|00⟩ + |11⟩)/√2"
+    },
+    {
+      "heading": "What the counts show",
+      "body": [
+        "Measuring both qubits in the computational basis yields only 00 and 11 in an ideal run, in roughly equal proportions. Outcomes 01 and 10 do not occur for this ideal Bell state.",
+        "The observed split still varies from run to run. What should not vary is the perfect agreement between the two measured bits."
+      ],
+      "callout": {
+        "title": "Correlation is not signalling",
+        "text": "The outcomes are correlated, but measuring q0 does not let you send a chosen message to q1. Each local measurement looks random; the correlation is only visible when the two classical records are compared.",
+        "tone": "key"
+      }
+    },
+    {
+      "heading": "Reading the bitstring",
+      "body": [
+        "For two qubits, Qiskit prints c1 on the left and c0 on the right. The string \"01\" would mean q1 measured 0 and q0 measured 1.",
+        "In the Bell circuit both qubits are measured, so both classical bits are meaningful. There are no unmeasured placeholder zeros here."
+      ]
+    },
+    {
+      "heading": "Build and test the Bell state",
+      "body": [
+        "The sample circuit is H(q0), CNOT(q0→q1), then measurements of q0 and q1. Run it and verify that the counts table contains only 00 and 11.",
+        "In the builder, try changing the CNOT direction to q1→q0. The ideal correlation still appears, which is a useful reminder that the gate order and control choice define the circuit."
+      ]
+    }
+  ],
+  "example_circuit": {
+    "num_qubits": 2,
+    "gates": [
+      { "name": "h", "target": 0 },
+      { "name": "cx", "control": 0, "target": 1 },
+      { "name": "measure", "target": 0, "classical_bit": 0 },
+      { "name": "measure", "target": 1, "classical_bit": 1 }
+    ],
+    "shots": 1024
+  },
+  "expected_behavior": [
+    "The ideal counts contain only \"00\" and \"11\".",
+    "The two bitstrings appear in roughly equal proportions, with normal sampling variation.",
+    "No \"01\" or \"10\" outcomes appear in an ideal simulation of this circuit."
+  ],
+  "check_questions": [
+    {
+      "question": "Which circuit prepares the Bell state (|00⟩ + |11⟩)/√2?",
+      "options": [
+        "X(q0), then measure both qubits",
+        "H(q0), then CNOT(q0→q1)",
+        "H(q1), then X(q0)",
+        "CNOT(q0→q1), then H(q1)"
+      ],
+      "answer_index": 1,
+      "explanation": "H creates the superposition on q0, and CNOT copies the computational-basis correlation to q1."
+    },
+    {
+      "question": "In an ideal Bell-state run, which pairs of outcomes are possible?",
+      "options": ["00 and 01", "00 and 11", "01 and 10", "All four equally"],
+      "answer_index": 1,
+      "explanation": "The state has amplitude only on |00⟩ and |11⟩, so only those two bitstrings are observed."
+    },
+    {
+      "question": "Does the Bell correlation allow Alice to send a message to Bob faster than light by measuring q0?",
+      "options": [
+        "Yes, because Bob's outcome changes instantly",
+        "No, because Bob's local outcomes remain random until the records are compared",
+        "Yes, if Alice chooses the measurement basis",
+        "No, because CNOT cannot create entanglement"
+      ],
+      "answer_index": 1,
+      "explanation": "Local measurement statistics do not reveal Alice's choice. The correlation appears only in the joint classical data, which must be communicated normally."
+    }
+  ]
+}
